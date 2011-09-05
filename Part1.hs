@@ -1,6 +1,7 @@
 module Part1 where
 
 import Data.List
+import Control.Monad (replicateM)
 
 type Path = [Int] -- e.g. [x,y,z] ==> v1 = x, v2 = y, v3 = z
 type Graph = ([[Int]], [Double]) -- (cost_matrix, probabilities)
@@ -29,3 +30,11 @@ bestPathAndCost g@(edgeMatrix, costs) = minimum latenciesAndPaths
   where
     latenciesAndPaths = map (pathCost g) paths `zip` paths
     paths = generatePaths (length edgeMatrix)
+    
+    
+main :: IO ()
+main = do
+    n <- readLn :: IO Int
+    costs <- replicateM n (readLn :: IO Double)
+    edges <- replicateM n $ fmap (map (read :: String -> Int) . words) getLine
+    print $ bestPathAndCost (edges, costs)
