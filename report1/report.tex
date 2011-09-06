@@ -18,6 +18,28 @@
 \section{How our algorithm works}
 We generate a list of all possible paths, starting from node 1. For each path we calculate the cost using the given latency-formula, and just pick the cheapest path as our answer.
 
+\section{Pseudocode}
+Input: A complete weighted probabilistic graph G = (EC, D), where EC is a
+matrix such that c = EC[u, v] is the cost for traversing from node u to v.
+D is a list, so that p = D[u] is the probability of node u being
+the chance of the broken lift being at node u.
+A matrix is a list of lists.
+
+Goal: To calculate the path with the lowest \emph{expected latency}.
+
+function bestPathAndCost
+input: the graph G as described above
+    paths = all possible hamiltonian paths.
+    pathLatencies_i = pathExpectedLatency(G, path_i) \forall. i
+    return the minimum value in pathLatencies
+
+function pathExpectedLatency
+input: the graph G and the hamiltonian path P
+    Using the expected latency function (EL) from the problem formulation on the input path.
+    return the expected latency
+
+
+
 \section{Appendix}
 All code, images and more is available at the project's \href{https://github.com/biforboman/Algorithms-TIN092}{github page} .
 
