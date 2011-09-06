@@ -3,3 +3,10 @@
 Part1
 *.o
 *.hi
+*.aux
+*.log
+*.out
+*goutput*
+report*/.nfs000000*
+*.pdf
+*.swp
