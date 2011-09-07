@@ -26,19 +26,49 @@ the chance of the broken lift being at node u.
 A matrix is a list of lists.
 
 Goal: To calculate the path with the lowest \emph{expected latency}.
-
 function bestPathAndCost
 input: the graph G as described above
-    paths = all possible hamiltonian paths.
-    pathLatencies_i = pathExpectedLatency(G, path_i) \forall. i
-    return the minimum value in pathLatencies
-
+\begin{enumerate}
+    \item paths = all possible hamiltonian paths.
+    \item $pathLatencies_i$ = pathExpectedLatency(G, $path_i$) $\forall. i$
+    \item return the minimum value in pathLatencies
+\end{enumerate}
 function pathExpectedLatency
 input: the graph G and the hamiltonian path P
     Using the expected latency function (EL) from the problem formulation on the input path.
     return the expected latency
 
+\section{Correctness}
+The task is to find the hamlitonian path with minimal expected latency.
+We claim that we try all hamiltonian paths, so we must show that
+1: All our paths are indeed hamiltonian
+2: All such paths are generated
 
+We have $n$ nodes called $1..n$, our path $P$ is a permutation of all nodes $1..n$.
+We interpret the $P_i$ as the $i$th node we have visited.
+That means we visit $n$ nodes, and since the elements in $P$ are unique.
+We are visiting each node exactly once, thus, $P$ is hamiltonian.
+
+Conversely, the only way for a path $P$ to be hamiltonian is to be a permutation of $1..n$.
+Otherwise not $n$ nodes are not visited, or not visited at least once.
+Therefore generating all permutations means generating all hamiltonian paths.
+
+A small adjustment has to be done since we always start from node $1$.
+This is represented by $P_1 = 1$, where $1$ is the first node, and $P_1$ is
+the first element in $P$.
+
+\section{Complexity}
+For each hamiltonian paths $p$, we calculate $p$'s  expected latency.
+Since the hamiltonian paths are permutations, there are $n!$ hamiltonian paths.
+And calculating the expected latency for a given path is $O(n)$,
+due to the path has $n$ elements.
+Hence we have a complexity of $O(n!*n)$.
+
+Ideally our implementation should have used arrays instead of lists.
+This being an easily fixed implementation detail, we ignored it.
+So in fact our implementation of expected latency is $O(n^2)$.
+
+As for memory complexity
 
 \section{Appendix}
 All code, images and more is available at the project's \href{https://github.com/biforboman/Algorithms-TIN092}{github page} .
