@@ -7,6 +7,7 @@
 \usepackage{rotating}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{listings}
 
 \title{Algorithms, assignment - part 1}
 \author{Arash Rouhani, Jakob Boman}
@@ -19,13 +20,31 @@
 We generate a list of all possible paths, starting from node 1. For each path we calculate the cost using the given latency-formula, and just pick the cheapest path as our answer.
 
 \section{Pseudocode}
-Input: A complete weighted probabilistic graph G = (EC, D), where EC is a
-matrix such that c = EC[u, v] is the cost for traversing from node u to v.
-D is a list, so that p = D[u] is the probability of node u being
-the chance of the broken lift being at node u.
+Input: A complete weighted probabilistic graph $G = (EC, D)$, where $EC$ is a
+matrix such that $c = EC_{uv}$ is the cost for traversing from node $u$ to $v$.
+$D$ is a list, so that $p = D_u$ is the probability of node $u$ being
+the chance of the broken lift being at node $u$.
 A matrix is a list of lists.
 
-Goal: To calculate the path with the lowest \emph{expected latency}.
+\begin{lstlisting}
+    generatePaths : Int to Paths
+    generatePaths n =
+        permutations of [1..n] that starts with 1
+
+    pathCost : Graph -> Path -> Double
+    pathCost (edgeMatrix, costs) path = 
+        sum (accumulativeEdgeCosts_i * D_i) (i = 1..n)
+      where
+        edgeCosts_i = edgeMatrix_{(path_i, path_i+1} (i = 1..n-1)
+        accumulativeEdgeCosts_i = sum of edgeCosts_j (1 <= j <= i-1) (i = 1..n) 
+    
+    bestPathAndCost : Graph -> (Double, Path)
+    bestPathAndCost G = 
+        minimum (pathCost G p, p) (p in generatePaths n)
+
+\end{lstlisting}
+
+Goal: To calculate the path with the lowest expected latency.
 function bestPathAndCost
 input: the graph G as described above
 \begin{enumerate}
@@ -58,20 +77,30 @@ This is represented by $P_1 = 1$, where $1$ is the first node, and $P_1$ is
 the first element in $P$.
 
 \section{Complexity}
-For each hamiltonian paths $p$, we calculate $p$'s  expected latency.
-Since the hamiltonian paths are permutations, there are $n!$ hamiltonian paths.
-And calculating the expected latency for a given path is $O(n)$,
-due to the path has $n$ elements.
-Hence we have a complexity of $O(n!*n)$.
+The program starts at the expression $bestPathAndCost G$.
+$bestPathAndCost$ is clearly
+O(<complexity of $generatePaths$>$*$<elements in $generatePaths n$>$+$ $generatePaths n$)
+
+$pathCost$ seem to have the complexity O($n^2$) as of the loop $(1 <= j <= i-1) (i = 1..n)$.
+But is of course easily reduced to O($n$) using an accumulator.
+
+$generatePaths$ generates $(n-1)!$ elements. Minus 1 because of we fix first node to $1$. 
+The complexity will be O(n!), as it is O($n$) to create each outputlist.
+
+All in all the program $bestPathAndCost$ has complexity O($n!+n!$) = O($n!$).
 
 Ideally our implementation should have used arrays instead of lists.
 This being an easily fixed implementation detail, we ignored it.
 So in fact our implementation of expected latency is $O(n^2)$.
+In other words we assumed indexing to be unit time operation. 
 
-As for memory complexity
+\section{Performence}
+
+
+
 
 \section{Appendix}
-All code, images and more is available at the project's \href{https://github.com/biforboman/Algorithms-TIN092}{github page} .
+All code, images and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page} .
 
 
 
