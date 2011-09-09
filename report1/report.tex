@@ -9,8 +9,10 @@
 \usepackage{color}
 \usepackage{listings}
 
-\title{Algorithms, assignment - part 1}
-\author{Arash Rouhani, Jakob Boman}
+\title{Algorithms, assignment - part 1 by Group 26}
+\author{Arash Rouhani (rarash@student.chalmers.se) - 901117-1213\\
+        Jakob Boman (bisforboman@gmail.com) - 901014-1357}
+	
 
 \begin{document}
 
@@ -20,42 +22,28 @@
 We generate a list of all possible paths, starting from node 1. For each path we calculate the cost using the given latency-formula, and just pick the cheapest path as our answer.
 
 \section{Pseudocode}
-Input: A complete weighted probabilistic graph $G = (EC, D)$, where $EC$ is a
+Graph representation: A complete weighted probabilistic graph $G = (EC, D)$, where $EC$ is a
 matrix such that $c = EC_{uv}$ is the cost for traversing from node $u$ to $v$.
-$D$ is a list, so that $p = D_u$ is the probability of node $u$ being
-the chance of the broken lift being at node $u$.
+$D$ is a list, so that $p = D_u$ is the probability of node $u$ being the broken lift.
 A matrix is a list of lists.
 
-\begin{lstlisting}
-    generatePaths : Int to Paths
+\begin{lstlisting}[mathescape]
+    generatePaths : Int -> Paths
     generatePaths n =
         permutations of [1..n] that starts with 1
 
     pathCost : Graph -> Path -> Double
     pathCost (edgeMatrix, costs) path = 
-        sum (accumulativeEdgeCosts_i * D_i) (i = 1..n)
+        $sum (accumulativeEdgeCosts_i * D_i) (i = 1..n)$
       where
-        edgeCosts_i = edgeMatrix_{(path_i, path_i+1} (i = 1..n-1)
-        accumulativeEdgeCosts_i = sum of edgeCosts_j (1 <= j <= i-1) (i = 1..n) 
+        $edgeCosts_i = edgeMatrix_{(path_i, path_{i+1}} (i = 1..n-1)$
+        $accumulativeEdgeCosts_i = sum of edgeCosts_j (1 <= j <= i-1) (i = 1..n) $
     
     bestPathAndCost : Graph -> (Double, Path)
     bestPathAndCost G = 
-        minimum (pathCost G p, p) (p in generatePaths n)
+        minimum (pathCost G p, p) (p $\in$ generatePaths n))
 
 \end{lstlisting}
-
-Goal: To calculate the path with the lowest expected latency.
-function bestPathAndCost
-input: the graph G as described above
-\begin{enumerate}
-    \item paths = all possible hamiltonian paths.
-    \item $pathLatencies_i$ = pathExpectedLatency(G, $path_i$) $\forall. i$
-    \item return the minimum value in pathLatencies
-\end{enumerate}
-function pathExpectedLatency
-input: the graph G and the hamiltonian path P
-    Using the expected latency function (EL) from the problem formulation on the input path.
-    return the expected latency
 
 \section{Correctness}
 The task is to find the hamlitonian path with minimal expected latency.
@@ -96,11 +84,43 @@ In other words we assumed indexing to be unit time operation.
 
 \section{Performence}
 
+\begin{center}
+    \begin{tabular}{ | l | l | p{4cm} | p{5cm} |}
+    \hline
+    Filename & Time(s) & Property & Interpretation \\ \hline
+    inst1 & 0.002 & n=5 & A really small n gives small runtime even for O(n!) complexity\\ \hline
+    inst2 & 0.594 & n=10 & Runtime is noticeable. Clearly not polynomial anymore comparing to inst1 \\ \hline
+    inst2\_weird\_edgecosts & 0.596 & n=10, high edge costs & Same as inst2. Edgecosts have no effect.
+        This is obvious as the complexity is stated to only depend on $n$ \\ \hline
+    inst2\_weird\_probs & 0.595 & n=10, unbalanced probabilities & Same as for weird edgecosts, only that probabilities changed \\ \hline
+    inst3 & 89.417 & n=12 & Runtime have heavly increased with just a increase of 2 nodes.
+        O(n!) suggests new time of $0.594*11*12=78.408$, very much like the actual runtime. 
+        This rough calculation highly suggests that the comlpexity is of the kind we stated \\ \hline
+    \end{tabular}
+\end{center}
 
-
+If we would draw a cartesian graph, with $n$ and $edgecosts$ as the axises, plotting the runtime,
+we would see that $edgecosts$ makes no difference, and that runtime grows enormously for each
+discrete increase of $n$.
 
 \section{Appendix}
-All code, images and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page} .
+No external resources was used.
+
+All code, test data and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page}.
+
+A testrun of our program, we compile the program using ghc.
+
+\begin{lstlisting}
+> ghc --make Part1.hs -O2
+[1 of 1] Compiling Main             ( Part1.hs, Part1.o )
+Linking Part1 ...
+
+> ./Part1 < inst1.txt 
+Min. Expected Latency: 29.327094
+Path: 1 4 2 3 5
+
+\end{lstlisting}
+
 
 
 

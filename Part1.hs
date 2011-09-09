@@ -37,4 +37,6 @@ main = do
     n <- readLn :: IO Int
     costs <- replicateM n (readLn :: IO Double)
     edges <- replicateM n $ fmap (map (read :: String -> Int) . words) getLine
-    print $ bestPathAndCost (edges, costs)
+    let (res, path) = bestPathAndCost (edges, costs)
+    putStrLn $ "Min. Expected Latency: " ++ show res
+    putStrLn $ "Path: " ++ unwords (map (show . (+1)) path)
