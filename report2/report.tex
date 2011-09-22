@@ -1,0 +1,92 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{listings}
+
+\title{Algorithms, assignment - part 2 by Group 26}
+\author{Arash Rouhani (rarash@student.chalmers.se) - 901117-1213\\
+        Jakob Boman (bisforboman@gmail.com) - 901014-1357}
+
+\begin{document}
+
+\maketitle
+
+\section{How our algorithm works}
+Our two solutions are greedy in the sense that they use a \emph{strategy}
+to calculate the next node in the path.
+
+The first strategy only considers the edge-costs, whereas the other considers
+only the probabilities. The first strategy picks the node which is closest
+to the current node (smallest edge-cost). The other strategy picks the
+remaining node which has the highest probability of containing the broken lift.
+
+
+\section{Greedy Certification}
+
+We will motivate that our algorithms are greedy. One property of greedy
+is that the solution (our path) is built up step by step. It's natural
+to let a \emph{step} mean a picking of the next node. So the algorithm
+will always make exactly $n-1$ steps. Please note that everything mentioned
+this far is general for both our algorithms, they \emph{only} differ
+in their decision-making for the steps. The algorithms decision-making
+is called its \emph{strategy}.
+
+We capture the essence of building up the solution step-by-step
+by defining what a strategy is and how it's used.
+
+\subsection{Pseudocode}
+\begin{lstlisting}[mathescape]
+type Strategy = Graph -> Path -> Node
+
+useGreedy :: Strategy -> Graph -> (Double, Path)
+useGreedy = (pathLatency graph path, path)
+  where path is the path we get by applying the strategy
+        n-1 times to incrementally build the path
+
+pathLatency was defined in the previous lab
+
+\end{lstlisting}
+
+The pseudocode above defines a strategy as a function
+taking the graph and the path decided upon so far,
+the function should return the next node to take.
+
+Lets look at the pseudocode defintions of our strategy
+
+\begin{lstlisting}[mathescape]
+
+stratCheapEdge : Strategy
+stratCheapEdge = choose the node $v `in` remainingNodes$ where edgecost(u -> v) is minimal
+  where remainingNodes is the set of nodes not yet visited
+        u is the current node
+
+stratCheapProb : Strategy
+stratCheapProb = choose the node $v `in` remainingNodes$ where probability(u) is maximal
+  where remainingNodes is the set of nodes not yet visited
+
+\end{lstlisting}
+
+\section{Succesful and Failing instances}
+
+\section{Appendix}
+No external resources was used.
+
+All code, test data and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page}.
+
+A testrun of our program, we compile the program using ghc.
+
+\begin{lstlisting}
+> ghc --make Part2.hs -O2
+
+\end{lstlisting}
+
+
+
+
+\end{document}
