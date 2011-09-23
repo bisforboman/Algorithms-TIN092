@@ -55,34 +55,100 @@ pathLatency was defined in the previous lab
 
 The pseudocode above defines a strategy as a function
 taking the graph and the path decided upon so far,
-the function should return the next node to take.
+the function should return the next node to visit.
 
-Lets look at the pseudocode defintions of our strategy
+Lets look at the pseudocode definitions of our strategy
 
 \begin{lstlisting}[mathescape]
 
 stratCheapEdge : Strategy
-stratCheapEdge = choose the node $v `in` remainingNodes$ where edgecost(u -> v) is minimal
-  where remainingNodes is the set of nodes not yet visited
-        u is the current node
+stratCheapEdge =
+  choose $v \in remainingNodes$ s.t. edgecost between u and v is minimal
+  (remainingNodes is the set of nodes not yet visited)
+  (u is the current node)
 
 stratCheapProb : Strategy
-stratCheapProb = choose the node $v `in` remainingNodes$ where probability(u) is maximal
-  where remainingNodes is the set of nodes not yet visited
+stratCheapProb =
+  choose $v \in remainingNodes$ s.t. probability(v) is maximal
+  (remainingNodes is the set of nodes not yet visited)
 
 \end{lstlisting}
 
-\section{Succesful and Failing instances}
+Let's mention how these functions interact.
+A complete 'Please take me out of here' algorithm should be of
+the type $Graph -> (Double, Path)$. This is acheived by
+$useGreedy(stratCheapEdge)$ and $useGreedy(stratCheapProb)$ respectively.
+Note that this is an example of higher order functions.
+
+\subsection{Complexity}
+The two methods have the same complexity. Lets analyze more deeply.
+
+\begin{lstlisting}[mathescape]
+stratCheapEdge =
+  choose $v \in remainingNodes$ s.t. edgecost between u and v is minimal
+  (remainingNodes is the set of nodes not yet visited)
+  (u is the current node)
+\end{lstlisting}
+
+This strategy is $O(n)$ in a good implementation, motivation:
+"Choose the node $v \in remainingNodes$" means iterating over
+the remaining nodes and then checking for "where probability(u) is maximal".
+There are $O(n)$ remaining nodes, and calculating probability(u) is constant
+assuming we use an array.
+Calculating $remainingNodes$ can be done in $O(n)$ with arrays.
+
+\begin{lstlisting}[mathescape]
+stratCheapProb =
+  choose $v \in remainingNodes$ s.t. probability(v) is maximal
+  (remainingNodes is the set of nodes not yet visited)
+\end{lstlisting}
+
+This strategy is very similar to stratCheapProb. The only difference
+is that we extract edge-costs instead of probabilities.
+We only consider adjacent edges, which are $O(n)$.
+So stratCheapEdge has also the complexity $O(n)$.
+
+
+\begin{lstlisting}[mathescape]
+useGreedy = (pathLatency graph path, path)
+  where path is the path we get by applying the strategy
+        n-1 times to incrementally build the path
+\end{lstlisting}
+We "build up" the path element by element. We add an
+element (next node) $n-1=O(n)$ times, to calculate the
+element we use the strategy, say the strategy has complexity $O(m)$.
+When we have completed the path we call $pathLatency$ which in
+the previous lab was $O(n)$. Therefor the complexity of
+useGreedy is $O(n*m) + O(n) = O(n*m)$.
+
+The final expressions $useGreedy(stratCheapEdge)$ and
+$useGreedy(stratCheapProb)$ has the complexity $O(n^2)$
+as useGreedy was $O(n*m)$ where $m$ was the complexity
+of its strategy, which in both cases appeared to be
+$O(n)$.
+
+A final mention on our implementation, for convenience and
+not focusing on implementation. Instead of using arrays
+we use lists. This leads to the strategies
+being $O(n^2)$, resulting the whole expression being $O(n^3)$.
+
+\section{Successful and Failing instances}
+
+We will attach the 4 instances in Fire.
+See the appendix below for how to run them.
 
 \section{Appendix}
 No external resources was used.
 
 All code, test data and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page}.
 
-A testrun of our program, we compile the program using ghc.
+Testrun of the instances.
 
 \begin{lstlisting}
-> ghc --make Part2.hs -O2
+> runhaskell Part2.hs < 1accept.txt
+> runhaskell Part2.hs < 1fail.txt
+> runhaskell Part2.hs < 2accept.txt
+> runhaskell Part2.hs < 2fail.txt
 
 \end{lstlisting}
 
