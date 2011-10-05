@@ -1,0 +1,130 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{amsmath}
+
+\title{Algorithms, assignment - part 1 by Group 26}
+\author{Arash Rouhani (rarash@student.chalmers.se) - 901117-1213\\
+        Jakob Boman (bisforboman@gmail.com) - 901014-1357}
+
+\begin{document}
+
+\maketitle
+
+\section{Dynamic Programming Strategy}
+The complete solution considers all nodes. We consider a partial solution
+of the problem to evaluate the expected latency for a subset of the nodes,
+from a chosen starting point. Note that we consider that we have not
+traveled any distance when solving for the partial problem.
+
+So our parameters becomes $V$ and $i$, the set of nodes to visit and the
+starting node. Our function returns an expected latency.
+
+$$ EL(\{\}, i) = 0 $$
+$$ EL(V, i) = 0 $$
+
+\begin{equation*}
+\begin{aligned}
+& \underset{v \in V}{\text{minimize}}
+& & EL(V\setminus \{v\}, v) + c_{v,u} * d(universe\setminus V) \\
+\end{aligned}
+\end{equation*}
+
+\section{Improving Efficiency}
+
+\section{Pseudocode}
+Graph representation: A complete weighted probabilistic graph $G = (EC, D)$, where $EC$ is a
+matrix such that $c = EC_{uv}$ is the cost for traversing from node $u$ to $v$.
+$D$ is a list, so that $p = D_u$ is the probability of node $u$ being the broken lift.
+A matrix is a list of lists.
+
+\begin{lstlisting}[mathescape]
+\end{lstlisting}
+
+\section{Complexity}
+The task is to find the hamlitonian path with minimal expected latency.
+We claim that we try all hamiltonian paths, so we must show that
+1: All our paths are indeed hamiltonian
+2: All such paths are generated
+
+We have $n$ nodes called $1..n$, our path $P$ is a permutation of all nodes $1..n$.
+We interpret the $P_i$ as the $i$th node we have visited.
+That means we visit $n$ nodes, and since the elements in $P$ are unique.
+We are visiting each node exactly once, thus, $P$ is hamiltonian.
+
+Conversely, the only way for a path $P$ to be hamiltonian is to be a permutation of $1..n$.
+Otherwise not $n$ nodes are not visited, or not visited at least once.
+Therefore generating all permutations means generating all hamiltonian paths.
+
+A small adjustment has to be done since we always start from node $1$.
+This is represented by $P_1 = 1$, where $1$ is the first node, and $P_1$ is
+the first element in $P$.
+
+\section{Complexity}
+The program starts at the expression $bestPathAndCost G$.
+$bestPathAndCost$ is clearly
+O(<complexity of $generatePaths$>$*$<elements in $generatePaths n$>$+$ $generatePaths n$)
+
+$pathCost$ seem to have the complexity O($n^2$) as of the loop $(1 <= j <= i-1) (i = 1..n)$.
+But is of course easily reduced to O($n$) using an accumulator.
+
+$generatePaths$ generates $(n-1)!$ elements. Minus 1 because of we fix first node to $1$. 
+The complexity will be O(n!), as it is O($n$) to create each outputlist.
+
+All in all the program $bestPathAndCost$ has complexity O($n!+n!$) = O($n!$).
+
+Ideally our implementation should have used arrays instead of lists.
+This being an easily fixed implementation detail, we ignored it.
+So in fact our implementation of expected latency is $O(n^2)$.
+In other words we assumed indexing to be unit time operation. 
+
+\section{Performence}
+
+\begin{center}
+    \begin{tabular}{ | l | l | p{4cm} | p{5cm} |}
+    \hline
+    Filename & Time(s) & Property & Interpretation \\ \hline
+    inst1 & 0.002 & n=5 & A really small n gives small runtime even for O(n!) complexity\\ \hline
+    inst2 & 0.594 & n=10 & Runtime is noticeable. Clearly not polynomial anymore comparing to inst1 \\ \hline
+    inst2\_weird\_edgecosts & 0.596 & n=10, high edge costs & Same as inst2. Edgecosts have no effect.
+        This is obvious as the complexity is stated to only depend on $n$ \\ \hline
+    inst2\_weird\_probs & 0.595 & n=10, unbalanced probabilities & Same as for weird edgecosts, only that probabilities changed \\ \hline
+    inst3 & 89.417 & n=12 & Runtime have heavly increased with just a increase of 2 nodes.
+        O(n!) suggests new time of $0.594*11*12=78.408$, very much like the actual runtime. 
+        This rough calculation highly suggests that the comlpexity is of the kind we stated \\ \hline
+    \end{tabular}
+\end{center}
+
+If we would draw a cartesian graph, with $n$ and $edgecosts$ as the axises, plotting the runtime,
+we would see that $edgecosts$ makes no difference, and that runtime grows enormously for each
+discrete increase of $n$.
+
+\section{Appendix}
+No external resources was used.
+
+All code, test data and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page}.
+
+A testrun of our program, we compile the program using ghc.
+
+\begin{lstlisting}
+> ghc --make Part1.hs -O2
+[1 of 1] Compiling Main             ( Part1.hs, Part1.o )
+Linking Part1 ...
+
+> ./Part1 < inst1.txt 
+Min. Expected Latency: 29.327094
+Path: 1 4 2 3 5
+
+\end{lstlisting}
+
+
+
+
+\end{document}
