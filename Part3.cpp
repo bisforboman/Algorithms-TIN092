@@ -14,15 +14,17 @@ VD d;
 VVI c;
 VVI egde;
 
+int calcs = 0;
 
 
 double solve(int remaining, int current, double probsRemaining){
-    if(remaining == 0)
-        return 0;
-
     double &best = mem[remaining][current];
     if(best < 1e98)
         return best;
+    calcs++;
+    if(remaining == 0)
+        return best=0;
+
     for (int i = 0; i < n; i++) {
         if((1 << i) & remaining){
             double res = solve(remaining - (1 << i), i, probsRemaining - d[i]) 
@@ -61,6 +63,7 @@ int main(int argc, char** argv) {
         now = egde[remaining][now];
     }
     cout << endl;
+    cout << "Num calculations: " << calcs << endl;
 
     return 0;
 }

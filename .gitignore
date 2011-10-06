@@ -1,6 +1,8 @@
 .nfs*
 *~
 Part1
+Part2
+Part3
 *.o
 *.hi
 *.aux

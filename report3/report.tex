@@ -68,14 +68,61 @@ Therefore the complexity is $O(n)*O(n-1)*O(n-2)*...*O(1) = O(n!)$.
 
 \section{Improving Efficiency}
 
+There are $(n-1)!$ different paths, however, when looking at our
+recursive definition of a subproblem, we see there are only
+$(2^n)*n$ different parameter-combinations, that is clearly less. This
+is intuitive, only needing to care for remaining
+nodes is a lot less burden than needing to know taken path.
+It is therefore clear that our $EL$ should be memoized, since there
+will be many paths "passing the same arguments" to $EL$.
+
+We memorize two values, firstly, the return value of EL, secondly,
+we memorize the chosen edge, so we can reconstruct the path.
+Note that both these values are stored in tables of memory $O(n^2*n)$.
+
+We have run our program on $instance 1$ twice, with memoization
+it did 29 calls that were firsttime unique parameters.
+65 without memoization.
+
+We know there are a $O(n^2*n)$ parameter-combinations for this method,
+and each calculation does $O(n)$ so resulting in $O(n^2*n^2)$
+time complexity.
+
+
 \section{Pseudocode}
-Graph representation: A complete weighted probabilistic graph $G = (EC, D)$, where $EC$ is a
-matrix such that $c = EC_{uv}$ is the cost for traversing from node $u$ to $v$.
-$D$ is a list, so that $p = D_u$ is the probability of node $u$ being the broken lift.
-A matrix is a list of lists.
+We have two lexicas $(NodeSet, Node) -> double$ and $(NodeSet, Node) -> Node$
+for $mem$ and $savedEdge$ respectively.
+
+Just as in the problem statement, $d$ is the array of probabilities
+and $c$ is the edge-cost matrix.
+
+In the pseudocode, $lat_v$ is the value we minimize over,
+it is mathematically defined as in the equation in chapter 1.
 
 \begin{lstlisting}[mathescape]
+
+double solve(NodeSet remaining, Node current, double probsRemaining){
+
+    If mem[remaining][current] is written then
+        return mem[remaining][current]
+
+    If nodeset $remaining$ is empty then
+        return 0
+
+    ForEach Node $v$ in remaining do
+        $lat_v$ = solve($remaining \setminus \{v\}$, u, probsRemaining - d[u])
+                       + c[current][u]*probsRemaining
+
+    mem[remaining][current] = smallest element in $lat_v$
+    savedEdge[remaining][current] = $v$ where $lat_v$ is the smallest
+
+    return mem[remaining][current]
+}
+
 \end{lstlisting}
+
+The answer is given by
+solve(universe \setminus \{startNode\}, startNode, 1-d[startNode])
 
 \section{Complexity}
 The task is to find the hamlitonian path with minimal expected latency.
