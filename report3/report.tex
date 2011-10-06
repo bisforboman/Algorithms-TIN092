@@ -27,15 +27,44 @@ traveled any distance when solving for the partial problem.
 So our parameters becomes $V$ and $i$, the set of nodes to visit and the
 starting node. Our function returns an expected latency.
 
-$$ EL(\{\}, i) = 0 $$
-$$ EL(V, i) = 0 $$
-
+$$ EL(\{\}, u) = 0 $$
 \begin{equation*}
 \begin{aligned}
-& \underset{v \in V}{\text{minimize}}
-& & EL(V\setminus \{v\}, v) + c_{v,u} * d(universe\setminus V) \\
+& EL(V, u) =
+& & \underset{v \in V}{\text{minimize}}
+& & & EL(V\setminus \{v\}, v) + c_{u,v} * d(universe\setminus V) \\
 \end{aligned}
 \end{equation*}
+
+The base case is trivial, so lets focus on the inductive step.
+The node $u$ (the one we traverse to) will cost
+$(distance_traveled+c_{v,u})*d(u)$ in the end, but the actual
+$distance_traveled$ is unknown to us since we say that we assume
+we "start" from $u$ and haven't traversed anything.
+
+So instead of dealing with what cost the node $u$ will cost, we look at the
+edge $u \to v$ Examine how the traversed distance $c_{v,u}$ will affect the
+resulting expected latency, Instead we calculate the latency the taken edge will cause
+for all remaining probabilities.
+The \emph{sum} for the probabilities of the remaining nodes are
+$d(universe\setminus V)$.
+
+\subsection{execution of instance 1}
+
+\begin{lstlisting}
+./Part3 < inst1.txt
+Min. Expected Latency: 29.3273
+Path: 1 4 2 3 5
+\end{lstlisting}
+
+\subsection{Complexity}
+
+Basically each "call" to EL does a loop of $O(r)$ where
+$r$ is the number of remaining nodes. In the loop
+we calculate the subproblem with one node less.
+Therefore the complexity is $O(n)*O(n-1)*O(n-2)*...*O(1) = O(n!)$.
+
+
 
 \section{Improving Efficiency}
 
