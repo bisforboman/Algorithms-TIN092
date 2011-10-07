@@ -10,7 +10,7 @@
 \usepackage{listings}
 \usepackage{amsmath}
 
-\title{Algorithms, assignment - part 1 by Group 26}
+\title{Algorithms, assignment - part 3 by Group 26}
 \author{Arash Rouhani (rarash@student.chalmers.se) - 901117-1213\\
         Jakob Boman (bisforboman@gmail.com) - 901014-1357}
 
@@ -38,12 +38,12 @@ $$ EL(\{\}, u) = 0 $$
 
 The base case is trivial, so lets focus on the inductive step.
 The node $u$ (the one we traverse to) will cost
-$(distance_traveled+c_{v,u})*d(u)$ in the end, but the actual
-$distance_traveled$ is unknown to us since we say that we assume
+$(distance\_traveled+c_{v,u})*d(u)$ in the end, but the actual
+$distance\_traveled$ is unknown to us since we say that we assume
 we "start" from $u$ and haven't traversed anything.
 
 So instead of dealing with what cost the node $u$ will cost, we look at the
-edge $u \to v$ Examine how the traversed distance $c_{v,u}$ will affect the
+edge $u \to v$. Examine how the traversed distance $c_{v,u}$ will affect the
 resulting expected latency, Instead we calculate the latency the taken edge will cause
 for all remaining probabilities.
 The \emph{sum} for the probabilities of the remaining nodes are
@@ -70,7 +70,7 @@ Therefore the complexity is $O(n)*O(n-1)*O(n-2)*...*O(1) = O(n!)$.
 
 There are $(n-1)!$ different paths, however, when looking at our
 recursive definition of a subproblem, we see there are only
-$(2^n)*n$ different parameter-combinations, that is clearly less. This
+$2^n*n$ different parameter-combinations, that is clearly less. This
 is intuitive, only needing to care for remaining
 nodes is a lot less burden than needing to know taken path.
 It is therefore clear that our $EL$ should be memoized, since there
@@ -78,19 +78,19 @@ will be many paths "passing the same arguments" to $EL$.
 
 We memorize two values, firstly, the return value of EL, secondly,
 we memorize the chosen edge, so we can reconstruct the path.
-Note that both these values are stored in tables of memory $O(n^2*n)$.
+Note that both these values are stored in tables of memory $O(2^n*n)$.
 
 We have run our program on $instance 1$ twice, with memoization
 it did 29 calls that were firsttime unique parameters.
 65 without memoization.
 
-We know there are a $O(n^2*n)$ parameter-combinations for this method,
-and each calculation does $O(n)$ so resulting in $O(n^2*n^2)$
+We know there are a $O(2^n*n)$ parameter-combinations for this method,
+and each calculation does $O(n)$ so resulting in $O(2^n*n^2)$
 time complexity.
 
 
 \section{Pseudocode}
-We have two lexicas $(NodeSet, Node) -> double$ and $(NodeSet, Node) -> Node$
+We have two lexicas $(NodeSet, Node) \to double$ and $(NodeSet, Node) \to Node$
 for $mem$ and $savedEdge$ respectively.
 
 Just as in the problem statement, $d$ is the array of probabilities
@@ -122,85 +122,81 @@ double solve(NodeSet remaining, Node current, double probsRemaining){
 \end{lstlisting}
 
 The answer is given by
-solve(universe \setminus \{startNode\}, startNode, 1-d[startNode])
+solve($universe \setminus \{startNode\}$, startNode, 1-d[startNode])
 
 \section{Complexity}
-The task is to find the hamlitonian path with minimal expected latency.
-We claim that we try all hamiltonian paths, so we must show that
-1: All our paths are indeed hamiltonian
-2: All such paths are generated
+We memorize over all the $2^n*n$ parameter-combinations, so we
+have $O(2^n*n)$ space complexity, obviously nothing can beat this
+lower bound so we just say that's the correct upper bound.
 
-We have $n$ nodes called $1..n$, our path $P$ is a permutation of all nodes $1..n$.
-We interpret the $P_i$ as the $i$th node we have visited.
-That means we visit $n$ nodes, and since the elements in $P$ are unique.
-We are visiting each node exactly once, thus, $P$ is hamiltonian.
+As for time complexity, the part that isn't $O(1)$
+in the pseudocode is the ForEach loop that is $O(n)$.
+When we state $O(n)$ We "assume" that a recursive call to $solve$
+is $O(1)$, that is $solve$ is memoized.
+That assumption is ok if we count in the cost of memoizing all
+the $O(2^n*n)$ function calls. And in a fully memoized
+environment we said that solve takes $O(n)$, so memoizing
+everything costs $O(2^n*n^2)$, and then we are done.
+Note how we say that we memoize for all combinations,
+so $O(2^n*n^2)$ is an upper bound.
 
-Conversely, the only way for a path $P$ to be hamiltonian is to be a permutation of $1..n$.
-Otherwise not $n$ nodes are not visited, or not visited at least once.
-Therefore generating all permutations means generating all hamiltonian paths.
-
-A small adjustment has to be done since we always start from node $1$.
-This is represented by $P_1 = 1$, where $1$ is the first node, and $P_1$ is
-the first element in $P$.
-
-\section{Complexity}
-The program starts at the expression $bestPathAndCost G$.
-$bestPathAndCost$ is clearly
-O(<complexity of $generatePaths$>$*$<elements in $generatePaths n$>$+$ $generatePaths n$)
-
-$pathCost$ seem to have the complexity O($n^2$) as of the loop $(1 <= j <= i-1) (i = 1..n)$.
-But is of course easily reduced to O($n$) using an accumulator.
-
-$generatePaths$ generates $(n-1)!$ elements. Minus 1 because of we fix first node to $1$. 
-The complexity will be O(n!), as it is O($n$) to create each outputlist.
-
-All in all the program $bestPathAndCost$ has complexity O($n!+n!$) = O($n!$).
-
-Ideally our implementation should have used arrays instead of lists.
-This being an easily fixed implementation detail, we ignored it.
-So in fact our implementation of expected latency is $O(n^2)$.
-In other words we assumed indexing to be unit time operation. 
-
-\section{Performence}
+\section{Performance}
 
 \begin{center}
     \begin{tabular}{ | l | l | p{4cm} | p{5cm} |}
     \hline
     Filename & Time(s) & Property & Interpretation \\ \hline
-    inst1 & 0.002 & n=5 & A really small n gives small runtime even for O(n!) complexity\\ \hline
-    inst2 & 0.594 & n=10 & Runtime is noticeable. Clearly not polynomial anymore comparing to inst1 \\ \hline
-    inst2\_weird\_edgecosts & 0.596 & n=10, high edge costs & Same as inst2. Edgecosts have no effect.
+    inst1 & 0.000 & n=5 & \\ \hline
+    inst2 & 0.000 & n=10 & \\ \hline
+    inst3 & 0.004 & n=12 & \\ \hline
+    inst4 & 0.042 & n=15 & \\ \hline
+    inst5 & 0.562 & n=18 & Runtime is noticeable. \\ \hline
+    inst6 & 1.365 & n=19 & \\ \hline
+    inst7 & 3.772 & n=20 & \\ \hline
+    inst7\_large\_edgecosts & 3.784 & n=20 & Same as inst7. Edgecosts have no effect.
         This is obvious as the complexity is stated to only depend on $n$ \\ \hline
-    inst2\_weird\_probs & 0.595 & n=10, unbalanced probabilities & Same as for weird edgecosts, only that probabilities changed \\ \hline
-    inst3 & 89.417 & n=12 & Runtime have heavly increased with just a increase of 2 nodes.
-        O(n!) suggests new time of $0.594*11*12=78.408$, very much like the actual runtime. 
-        This rough calculation highly suggests that the comlpexity is of the kind we stated \\ \hline
     \end{tabular}
 \end{center}
 
+Lets study the increased runtime for inst5..inst7.
+We notice that it clearly isn't $O(n!)$ anymore, $n$ increasing with 1
+is approximately a little more than twice the runtime.
+
 If we would draw a cartesian graph, with $n$ and $edgecosts$ as the axises, plotting the runtime,
-we would see that $edgecosts$ makes no difference, and that runtime grows enormously for each
-discrete increase of $n$.
+we would see that $edgecosts$ makes no difference, and that runtime grows for each
+step we increase $n$. A step will increase the runtime by more than twice.
+
+Finally we compare with the runtimes from lab 1:
+
+
+\begin{center}
+    \begin{tabular}{ | l | l | p{4cm} | p{5cm} |}
+    \hline
+    Filename & Time(s) & Property & Interpretation \\ \hline
+    inst1 & 0.002 & n=5 \\ \hline
+    inst2 & 0.594 & n=10 \\ \hline
+    inst2\_weird\_edgecosts & 0.596 \\ \hline
+    inst2\_weird\_probs & 0.595 & \\ \hline
+    inst3 & 89.417 & n=12 \\ \hline
+    \end{tabular}
+\end{center}
+
+The runtime improvement is clear.
 
 \section{Appendix}
 No external resources was used.
 
 All code, test data and more is available at the project's \href{https://github.com/bisforboman/Algorithms-TIN092}{github page}.
 
-A testrun of our program, we compile the program using ghc.
+A testrun of our program, we compile the program using g++.
 
 \begin{lstlisting}
-> ghc --make Part1.hs -O2
-[1 of 1] Compiling Main             ( Part1.hs, Part1.o )
-Linking Part1 ...
-
-> ./Part1 < inst1.txt 
-Min. Expected Latency: 29.327094
+> g++ -O2 -o Part3 Part3.cpp
+> ./Part3 < inst1.txt
+Min. Expected Latency: 29.3273
 Path: 1 4 2 3 5
+Num calculations: 33
 
 \end{lstlisting}
-
-
-
 
 \end{document}
