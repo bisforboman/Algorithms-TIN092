@@ -27,7 +27,16 @@ matrix such that $c = EC_{uv}$ is the cost for traversing from node $u$ to $v$.
 $D$ is a list, so that $p = D_u$ is the probability of node $u$ being the broken lift.
 A matrix is a list of lists.
 
+Yield means adding an element to the end result.
+
 \begin{lstlisting}[mathescape]
+    permutations : [a] -> [[a]]
+    permutations [] = [[]] O(1)
+    permutations xs =
+        forEach (x $\in$ xs) O(n)
+            forEach (ys $\in$ permutations(xs $\setminus$ x)) O(n!)
+                yield (x:ys) O(1)
+
     generatePaths : Int -> Paths
     generatePaths n =
         permutations of [1..n] that starts with 1
@@ -63,6 +72,13 @@ Therefore generating all permutations means generating all hamiltonian paths.
 A small adjustment has to be done since we always start from node $1$.
 This is represented by $P_1 = 1$, where $1$ is the first node, and $P_1$ is
 the first element in $P$.
+
+How does this relate to the pseudocode? $generatePaths$ will generate
+all paths starting from node 1 (we concluded that is all interesting
+hamiltonian paths). $bestPathAndCost$ Simply picks the best
+of those paths. Thus that is the answer. It should be noted that
+$pathCost$ and $permutations$ are helpfunctions for
+$bestPathAndCost$ and $generatePaths$ respectively.
 
 \section{Complexity}
 The program starts at the expression $bestPathAndCost G$.

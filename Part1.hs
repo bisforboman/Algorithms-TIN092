@@ -6,9 +6,18 @@ import Control.Monad (replicateM)
 type Path = [Int] -- e.g. [x,y,z] ==> v1 = x, v2 = y, v3 = z
 type Graph = ([[Int]], [Double]) -- (cost_matrix, probabilities)
 
+
+selections :: [a] -> [(a, [a])]
+selections [] = 
+selections (x:xs) = 
+
+myPermutations :: [a] -> [[a]]
+myPermutations [] = [[]]
+myPermutations (x:xs) = [ | ys <- myPermutations xs]
+
 -- | Given number of nodes, generate all possible paths
 generatePaths :: Int -> [Path]
-generatePaths n = map (0:) $ permutations [1..n-1]
+generatePaths n = map (0:) $ myPermutations [1..n-1]
 
 pathCost :: Graph -> Path -> Double
 pathCost (edgeMatrix, costs) path = 
