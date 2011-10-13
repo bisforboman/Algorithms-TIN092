@@ -90,7 +90,9 @@ $bestPathAndCost$ and $generatePaths$ respectively.
 \section{Complexity}
 The program starts at the expression $bestPathAndCost G$.
 $bestPathAndCost$ is clearly
-$$ O(<complexity of $pathCost$>$*$<elements in $generatePaths n$>$+$ $generatePaths n$) $$
+$$ O(complexity(pathCost)*|generatePaths(n)|+ generatePaths(n)) $$
+Where $|a|$ is the number of elements in $a$.
+
 Let's resolve the comlexities of the helper functions so we can calculate
 equation above.
 
