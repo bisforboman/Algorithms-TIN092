@@ -131,7 +131,7 @@ In other words we assumed indexing to be unit time operation.
 \section{Performence}
 
 \begin{center}
-    \begin{tabular}{ | l | l | p{4cm} | p{5cm} |}
+    \begin{tabular}{ | l | l | p{2.5cm} | p{6.5cm} |}
     \hline
     Filename & Time(s) & Property & Interpretation \\ \hline
     inst1 & 0.002 & n=5 & A really small n gives small runtime even for O(n!) complexity\\ \hline
@@ -142,12 +142,18 @@ In other words we assumed indexing to be unit time operation.
     inst3 & 89.417 & n=12 & Runtime have heavly increased with just a increase of 2 nodes.
         O(n!) suggests new time of $0.594*11*12=78.408$, very much like the actual runtime. 
         This rough calculation highly suggests that the comlpexity is of the kind we stated \\ \hline
+    nodes6  & 0.000 & n=6  & \\ \hline
+    nodes7  & 0.003 & n=7  & \\ \hline
+    nodes8  & 0.015 & n=8  & \\ \hline
+    nodes9  & 0.079 & n=9  & \\ \hline
+    nodes11 & 8.202 & n=11 & \\ \hline
     \end{tabular}
 \end{center}
 
 If we would draw a cartesian graph, with $n$ and $edgecosts$ as the axises, plotting the runtime,
 we would see that $edgecosts$ makes no difference, and that runtime grows enormously for each
-discrete increase of $n$.
+discrete increase of $n$. We note especially for $n = [9, 10, 11, 12]$ we get running times
+of $[0.079, 0.594, 8.202, 89.417]$ in seconds.
 
 \section{Appendix}
 No external resources was used.
