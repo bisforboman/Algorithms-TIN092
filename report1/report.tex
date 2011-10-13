@@ -90,15 +90,36 @@ $bestPathAndCost$ and $generatePaths$ respectively.
 \section{Complexity}
 The program starts at the expression $bestPathAndCost G$.
 $bestPathAndCost$ is clearly
-O(<complexity of $generatePaths$>$*$<elements in $generatePaths n$>$+$ $generatePaths n$)
+$$ O(<complexity of $pathCost$>$*$<elements in $generatePaths n$>$+$ $generatePaths n$) $$
+Let's resolve the comlexities of the helper functions so we can calculate
+equation above.
 
 $pathCost$ seem to have the complexity O($n^2$) as of the loop $(1 <= j <= i-1) (i = 1..n)$.
 But is of course easily reduced to O($n$) using an accumulator.
 
 $generatePaths$ generates $(n-1)!$ elements. Minus 1 because of we fix first node to $1$. 
-The complexity will be O(n!), as it is O($n$) to create each outputlist.
+The complexity will be O($Perms(n-1)$).
 
-All in all the program $bestPathAndCost$ has complexity O($n!+n!$) = O($n!$).
+$permutations$ is less trivial, it's complexity $O(perms(n))$ depends on
+$O(perms(n-1))$ as $permutations$ is recursive. However we can still write
+down the equations, from the base and recursion cases respectively:
+
+$$ O(perms(0) = O(1) $$
+$$ O(perms(n) = O(n*(n+perms(n-1)+n!) = O(n*(perms(n-1)+n!) $$
+
+Now you can realize that O($perm(n) = n!*n$) is the only solution to
+the equations. Now we have loosely proved the complexity of permutations
+to be O($n!*n$).
+
+So now we can finally work backwards and state the complexities of the helperfunction
+and finally $bestPathAndCost$. $generatePaths$ is $O(Perms(n-1))=O(n!)$,
+$bestPathAndCost$ has complexity
+
+$$O(n*(n-1)! + n!) = O(n!*n!) = O(n!) $$
+
+Since $bestPathAndCost$ is the top-level equation of our program,
+the complexity of the program is the complexity of $bestPathAndCost$.
+Hence, the program has complexity O($n!+n!$) = O($n!$).
 
 Ideally our implementation should have used arrays instead of lists.
 This being an easily fixed implementation detail, we ignored it.
