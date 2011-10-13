@@ -27,6 +27,11 @@ matrix such that $c = EC_{uv}$ is the cost for traversing from node $u$ to $v$.
 $D$ is a list, so that $p = D_u$ is the probability of node $u$ being the broken lift.
 A matrix is a list of lists.
 
+Below we have annotated the complexity of permutations at
+each instruction.
+We define the complexity of permutations for $O(Perms(n))$,
+$n$ being the length of the argument list.
+
 Yield means adding an element to the end result.
 
 \begin{lstlisting}[mathescape]
@@ -34,8 +39,10 @@ Yield means adding an element to the end result.
     permutations [] = [[]] O(1)
     permutations xs =
         forEach (x $\in$ xs) O(n)
-            forEach (ys $\in$ permutations(xs $\setminus$ x)) O(n!)
-                yield (x:ys) O(1)
+            ys := xs $\setminus$ x O(n)
+            perms := permutations(ys) O(Perms(n-1))
+            forEach (zs $\in$ perms) O(n!)
+                yield (x:zs) O(1)
 
     generatePaths : Int -> Paths
     generatePaths n =
